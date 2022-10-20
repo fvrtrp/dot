@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { get_docs, add_doc } from '../firebase'
+import { get_docs, add_doc, listener, update_doc } from '../firebase'
 import Form from '../form'
 import { users } from '../users'
 import { sha256 } from 'js-sha256'
+import ThreadView from './threadview'
 
 const initialAppState = {
     isAuthenticated: false,
@@ -11,12 +12,45 @@ const initialAppState = {
 
 export default function Home(props) {
     const passwordRef = useRef(null)
+    const [loading, setLoading] = useState(true)
     const [appState, setAppState] = useState(initialAppState)
+    const [appData, setAppData] = useState([])
+    const [appConfig, setAppConfig] = useState({})
     const [error, setError] = useState(null)
+
     useEffect(() => {
-        console.log(`getting`)
-        get_docs()
+        listener(updateLocalData)
+        setLoading(false)
+        return (() => {
+            console.log(`removing listener`)
+            listener('stop')
+        })
     }, [])
+
+    const addItem = (data) => {
+        //processing
+        data = {
+            ...data,
+            id: appData.length===0?1:appData[appData.length-1].id+1,
+            postedBy: appState.userDetails.id,
+            timeStamp: new Date().toUTCString()
+        }
+        update_doc({
+            appData: [...appData, data],
+            appConfig
+        })
+    }
+
+    const updateLocalData = (data) => {
+        if(Object.keys(data).length === 0) {
+            data = { appData: [], appConfig: {} }
+        }
+        console.log(`zzzwillupdate`, data)
+        setAppData(data['appData'])
+        setAppConfig(data['appConfig'])
+    }
+
+
 
     const authenticateWithPassword = (e) => {
         e.preventDefault()
@@ -33,15 +67,17 @@ export default function Home(props) {
         passwordRef.current.value = ''
     }
 
+    if(loading) return <div className="loading">loading</div>
+
     return (
         <div className="home">
             {
                 appState.isAuthenticated && 
                 <div className="userSection">{appState.userDetails.nickname}</div>
             }
-            <Form />
+            <ThreadView data={appData} />
             {
-                !appState.isAuthenticated &&
+                !appState.isAuthenticated ?
                 <form onSubmit={authenticateWithPassword}>
                     <input
                         type="password"
@@ -51,6 +87,8 @@ export default function Home(props) {
                     />
                     <div onClick={authenticateWithPassword}>Authenticate</div>
                 </form>
+                :
+                <Form finish={addItem} />
             }
         </div>
     )

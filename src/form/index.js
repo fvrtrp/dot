@@ -38,6 +38,7 @@ export default function Form(props) {
         }
         setError(null)
         console.log(`submitting form`, formData)
+        props.finish(formData)
     }
 
     return (
