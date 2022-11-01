@@ -57,7 +57,7 @@ function ViewItem(props) {
             <div className="value">
                 {
                     isValidUrl(data.value) &&
-                    <a href={data.value} target="_blank" rel="noreferrer">{data.value.slice(0,50)+'...'}</a>
+                    <a href={data.value} target="_blank" rel="noreferrer">{data.value.slice(0,200)+'...'}</a>
                 }
                 {
                     !isValidUrl(data.value) && data.value

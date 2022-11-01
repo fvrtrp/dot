@@ -31,6 +31,7 @@
                     box-sizing: border-box;
                     border-radius: 4px;
                     font-size: 14px;
+                    word-break: break-word;
                     a {
                         color: #3fff59 !important;
                     }
@@ -86,15 +87,36 @@
     }
 }
 
-// @media screen (width<=719px) {
 
-// }
-
-
-.appTitle {
+.appHeader {
     position: fixed;
     cursor: pointer;
     left: 50px;
     top: 25px;
-    width: 100px;
+    .appTitle {
+        width: 100px;
+    }
+}
+
+@media screen and (max-width: 719px) {
+    .home {
+        .appHeader {
+            height: 100px;
+            width: 100%;
+        }
+        .threadView {
+            margin-top: 100px;
+            width: 100%;
+            height: calc(100% - 230px);
+        }
+        .formContainer {
+            width: 95% !important;
+            form {
+                width: 100%;
+                input {
+                    width: 95%;
+                }
+            }
+        }
+    }
 }
