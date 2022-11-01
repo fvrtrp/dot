@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import './index.scss'
 
 const initialFormData = {
@@ -9,9 +9,10 @@ const initialFormData = {
     timeStamp: null,
 }
 
-export default function Form(props) {
+function Form(props) {
     const [formData, setFormData] = useState(initialFormData)
     const [error, setError] = useState(null)
+    const inputRef = useRef(null)
     useEffect(() => {
         console.log(`form init`)
     }, [])
@@ -37,24 +38,29 @@ export default function Form(props) {
             return
         }
         setError(null)
-        console.log(`submitting form`, formData)
+        inputRef.current.value = ''
         props.finish(formData)
+        setFormData(initialFormData)
     }
 
     return (
         <div className="formContainer">
             <form onSubmit={submitForm}>
                 <input
+                    ref={inputRef}
                     type="text"
-                    placeholder="say something"
+                    placeholder="Type, or paste links"
                     defaultValue=""
                     onChange={(e)=>updateForm('value', e)}
+                    autoFocus
                 />
             </form>
-            <div className="home" onClick={submitForm}>Add</div>
+            <div className="submitForm" onClick={submitForm}>Go</div>
             {
             error && <div className="validationError">{error}</div>
             }
         </div>
     )
 }
+
+export default React.memo(Form)

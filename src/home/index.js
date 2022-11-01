@@ -4,6 +4,7 @@ import Form from '../form'
 import { users } from '../users'
 import { sha256 } from 'js-sha256'
 import ThreadView from './threadview'
+import DotLogo from '../dot.png'
 
 const initialAppState = {
     isAuthenticated: false,
@@ -71,22 +72,27 @@ export default function Home(props) {
 
     return (
         <div className="home">
-            {
+            {/* {
                 appState.isAuthenticated && 
                 <div className="userSection">{appState.userDetails.nickname}</div>
-            }
+            } */}
+            <div className="appHeader">
+                <a href="https://surajk95.github.io"><img className="appTitle" alt="app logo" title="DOT by fevertrip" src={DotLogo} /></a>
+            </div>
             <ThreadView data={appData} />
             {
                 !appState.isAuthenticated ?
-                <form onSubmit={authenticateWithPassword}>
-                    <input
-                        type="password"
-                        placeholder="enter your passcode to start posting"
-                        defaultValue=""
-                        ref={passwordRef}
-                    />
-                    <div onClick={authenticateWithPassword}>Authenticate</div>
-                </form>
+                <div className="formContainer">
+                    <form onSubmit={authenticateWithPassword}>
+                        <input
+                            type="password"
+                            placeholder="enter your passcode to start posting"
+                            defaultValue=""
+                            ref={passwordRef}
+                        />
+                        <div onClick={authenticateWithPassword} className="submitForm">Go</div>
+                    </form>
+                </div>
                 :
                 <Form finish={addItem} />
             }
