@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react'
+import Linkify from 'react-linkify/dist/components/Linkify'
 import { users } from '../users'
 
 const initialAppState = {
@@ -41,27 +42,16 @@ export default function View(props) {
 function ViewItem(props) {
     const { data } = props
     const targetUser = users.find(i => i.id===data?.postedBy)
-    const isValidUrl = urlString=> {
-        var urlPattern = new RegExp('^(https?:\\/\\/)?'+ // validate protocol
-      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // validate domain name
-      '((\\d{1,3}\\.){3}\\d{1,3}))'+ // validate OR ip (v4) address
-      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // validate port and path
-      '(\\?[;&a-z\\d%_.~+=-]*)?'+ // validate query string
-      '(\\#[-a-z\\d_]*)?$','i'); // validate fragment locator
-    return !!urlPattern.test(urlString);
-  }
 
     return (
         <div className="viewItem">
                         <div className="postedBy">{targetUser.nickname.slice(0,2)}</div>
             <div className="value">
-                {
-                    isValidUrl(data.value) &&
-                    <a href={data.value} target="_blank" rel="noreferrer">{data.value.slice(0,200)+'...'}</a>
-                }
-                {
-                    !isValidUrl(data.value) && data.value
-                }
+                <Linkify componentDecorator={(decoratedHref, decoratedText, key) => (
+                    <a target="_blank" rel="noreferrer" href={decoratedHref} key={key}>
+                        {decoratedText}
+                    </a>
+                )}>{data.value}</Linkify>
             </div>
         </div>
     )
